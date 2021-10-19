@@ -8,11 +8,15 @@ on:
       - main
     paths:
       - '*.go'
-      - 'Dockerfile'
+      - Dockerfile
+      - go.mod
+      - go.sum
   pull_request:
     paths:
       - '*.go'
-      - 'Dockerfile'
+      - Dockerfile
+      - go.mod
+      - go.sum
 
 jobs:
   hadolint:
