@@ -34,7 +34,7 @@ func (r Recenttracks) String() string {
 
 	track := r.Tracks[0]
 
-	return fmt.Sprintf(" %s %s %s ", r.User, track.action(), track)
+	return fmt.Sprintf(" %s %s: %s ", r.User, track.action(), track)
 }
 
 // User represents the user information returned in the lastfm json

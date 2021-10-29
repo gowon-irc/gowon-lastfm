@@ -74,7 +74,7 @@ func TestString(t *testing.T) {
 		{
 			name:     "Valid result",
 			obj:      rt,
-			expected: " testuser last listened to testartist - testtrack (testalbum) ",
+			expected: " testuser last listened to: testartist - testtrack (testalbum) ",
 		},
 		{
 			name:     "Invalid results",

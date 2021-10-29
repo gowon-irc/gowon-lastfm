@@ -22,3 +22,10 @@ spec:
               value: mosquitto:1883
             - name: GOWON_LASTFM_API_KEY
               value: apikey
+          volumeMounts:
+            - name: lastfm
+              mountPath: /data
+      volumes:
+        - name: lastfm
+          persistentVolumeClaim:
+            claimName: lastfm

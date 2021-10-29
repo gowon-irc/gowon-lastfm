@@ -3,6 +3,7 @@ module github.com/gowon-irc/gowon-lastfm
 go 1.17
 
 require (
+	github.com/boltdb/bolt v1.3.1
 	github.com/eclipse/paho.mqtt.golang v1.3.5
 	github.com/gowon-irc/go-gowon v0.0.0-20211017190628-9a3e88e0f3d4
 	github.com/jessevdk/go-flags v1.5.0
