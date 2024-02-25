@@ -1,0 +1,10 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: lastfm-config
+data:
+  config.yaml: |
+    commands:
+      - command: lastfm
+        endpoint: http://lastfm:8080
