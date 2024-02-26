@@ -6,6 +6,8 @@ metadata:
   labels:
     app.kubernetes.io/name: lastfm
 spec:
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app.kubernetes.io/name: lastfm
@@ -18,14 +20,10 @@ spec:
         - name: lastfm
           image: lastfm
           env:
-            - name: GOWON_BROKER
-              value: mosquitto:1883
             - name: GOWON_LASTFM_API_KEY
               value: apikey
-          volumeMounts:
-            - name: lastfm
-              mountPath: /data
-      volumes:
-        - name: lastfm
-          persistentVolumeClaim:
-            claimName: lastfm
+            - name: GOWON_LASTFM_KV_PATH
+              value: /tmp/kv.db
+          ports:
+            - containerPort: 8080
+              name: http
