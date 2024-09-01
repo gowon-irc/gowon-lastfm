@@ -96,11 +96,29 @@ func lastfmHandler(client *req.Client, kv *bolt.DB, m *gowon.Message) (string, e
 		return setUserHandler(kv, m.Nick, user)
 	case "l", "scrobbles":
 		return CommandHandler(client, kv, m.Nick, user, lastfmNewestScrobble)
+	case "ta", "topartists":
+		return CommandHandler(client, kv, m.Nick, user, lastfmTopArtistsAllTime)
+	case "taw", "topartistsweekly":
+		return CommandHandler(client, kv, m.Nick, user, lastfmTopArtistsWeekly)
+	case "tam", "topartistsmonthly":
+		return CommandHandler(client, kv, m.Nick, user, lastfmTopArtistsMonthly)
+	case "ta3m", "topartists3monhtly":
+		return CommandHandler(client, kv, m.Nick, user, lastfmTopArtists3Monthly)
+	case "ta6m", "topartists6monhtly":
+		return CommandHandler(client, kv, m.Nick, user, lastfmTopArtists6Monthly)
+	case "tay", "topartistsyearly":
+		return CommandHandler(client, kv, m.Nick, user, lastfmTopArtistsYearly)
 	}
 
 	commands := []string{
 		"set (s)",
 		"scrobbles (l)",
+		"topartists (ta)",
+		"topartistsweekly (taw)",
+		"topartistsmonthly (tam)",
+		"topartists3monthly (ta3m)",
+		"topartists6monthly (ta6m)",
+		"topartistsyearly (tay)",
 	}
 
 	cl := colourList(commands)

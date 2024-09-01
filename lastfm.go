@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/imroc/req/v3"
 )
@@ -29,11 +30,11 @@ func colourList(in []string) (out []string) {
 	return out
 }
 
-type lastfmJSON struct {
+type lastfmUserGetRecentTracks struct {
 	Recenttracks Recenttracks `json:"recenttracks"`
 }
 
-func (j lastfmJSON) String() string {
+func (j lastfmUserGetRecentTracks) String() string {
 	return j.Recenttracks.String()
 }
 
@@ -50,7 +51,7 @@ func (r Recenttracks) String() string {
 
 	track := r.Tracks[0]
 
-	return fmt.Sprintf(" %s %s: %s ", r.User, track.action(), track)
+	return fmt.Sprintf("{green}{clear} %s %s: %s {green}{clear}", r.User, track.action(), track)
 }
 
 // User represents the user information returned in the lastfm json
@@ -105,7 +106,7 @@ func (t Track) action() string {
 }
 
 func lastfmNewestScrobble(client *req.Client, user string) (msg string, err error) {
-	j := &lastfmJSON{}
+	j := &lastfmUserGetRecentTracks{}
 
 	_, err = client.R().
 		SetQueryParam("method", "user.getrecenttracks").
@@ -120,4 +121,99 @@ func lastfmNewestScrobble(client *req.Client, user string) (msg string, err erro
 	}
 
 	return j.String(), nil
+}
+
+type lastfmUserGetTopArtists struct {
+	TopArtists struct {
+		Artists []struct {
+			Name      string `json:"name"`
+			PlayCount string `json:"playcount"`
+		} `json:"artist"`
+	} `json:"topartists"`
+}
+
+func lastfmTopArtists(client *req.Client, user, period string) (msg string, err error) {
+	j := &lastfmUserGetTopArtists{}
+
+	_, err = client.R().
+		SetQueryParam("method", "user.gettopartists").
+		SetQueryParam("user", user).
+		SetQueryParam("format", "json").
+		SetQueryParam("limit", "10").
+		SetQueryParam("period", period).
+		SetSuccessResult(&j).
+		Get(lastfmAPIURL)
+
+	if err != nil {
+		return "", err
+	}
+
+	artists := []string{}
+	for _, a := range j.TopArtists.Artists {
+		artists = append(artists, fmt.Sprintf("%s (%s)", a.Name, a.PlayCount))
+	}
+
+	cl := colourList(artists)
+
+	return strings.Join(cl, ", "), err
+}
+
+func lastfmTopArtistsAllTime(client *req.Client, user string) (msg string, err error) {
+	topartists, err := lastfmTopArtists(client, user, "overall")
+
+	if err != nil {
+		return "", err
+	}
+
+	return fmt.Sprintf("%s's top artists: %s", user, topartists), nil
+}
+
+func lastfmTopArtistsWeekly(client *req.Client, user string) (msg string, err error) {
+	topartists, err := lastfmTopArtists(client, user, "7day")
+
+	if err != nil {
+		return "", err
+	}
+
+	return fmt.Sprintf("%s's top artists (last week): %s", user, topartists), nil
+}
+
+func lastfmTopArtistsMonthly(client *req.Client, user string) (msg string, err error) {
+	topartists, err := lastfmTopArtists(client, user, "1month")
+
+	if err != nil {
+		return "", err
+	}
+
+	return fmt.Sprintf("%s's top artists (last month): %s", user, topartists), nil
+}
+
+func lastfmTopArtists3Monthly(client *req.Client, user string) (msg string, err error) {
+	topartists, err := lastfmTopArtists(client, user, "3month")
+
+	if err != nil {
+		return "", err
+	}
+
+	return fmt.Sprintf("%s's top artists (last 3 months): %s", user, topartists), nil
+}
+
+func lastfmTopArtists6Monthly(client *req.Client, user string) (msg string, err error) {
+	topartists, err := lastfmTopArtists(client, user, "6month")
+
+	if err != nil {
+		return "", err
+	}
+
+	return fmt.Sprintf("%s's top artists (last 6 months): %s", user, topartists), nil
+}
+
+func lastfmTopArtistsYearly(client *req.Client, user string) (msg string, err error) {
+	topartists, err := lastfmTopArtists(client, user, "12month")
+
+	if err != nil {
+		return "", err
+	}
+
+	return fmt.Sprintf("%s's top artists (last year): %s", user, topartists), nil
 }
