@@ -1,16 +1,13 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
+
+	"github.com/imroc/req/v3"
 )
 
 const (
-	lastfmRecentTracksAPIURL = "https://ws.audioscrobbler.com/2.0" +
-		"?method=user.getrecenttracks" +
-		"&user=%s&api_key=%s&format=json&limit=1"
+	lastfmAPIURL = "https://ws.audioscrobbler.com/2.0"
 )
 
 type lastfmJSON struct {
@@ -88,24 +85,16 @@ func (t Track) action() string {
 	return "is listening to"
 }
 
-func lastfm(user, apiKey string) (msg string, err error) {
-	url := fmt.Sprintf(lastfmRecentTracksAPIURL, user, apiKey)
-
+func lastfmNewestScrobble(client *req.Client, user string) (msg string, err error) {
 	j := &lastfmJSON{}
 
-	res, err := http.Get(url)
-	if err != nil {
-		return "", err
-	}
-
-	defer res.Body.Close()
-
-	body, err := io.ReadAll(res.Body)
-	if err != nil {
-		return "", err
-	}
-
-	err = json.Unmarshal(body, &j)
+	_, err = client.R().
+		SetQueryParam("method", "user.getrecenttracks").
+		SetQueryParam("user", user).
+		SetQueryParam("format", "json").
+		SetQueryParam("limit", "1").
+		SetSuccessResult(&j).
+		Get(lastfmAPIURL)
 
 	if err != nil {
 		return "", err
