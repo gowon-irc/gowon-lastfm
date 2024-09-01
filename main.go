@@ -94,11 +94,18 @@ func lastfmHandler(client *req.Client, kv *bolt.DB, m *gowon.Message) (string, e
 	switch command {
 	case "s", "set":
 		return setUserHandler(kv, m.Nick, user)
-	case "l", "lastscrobble":
+	case "l", "scrobbles":
 		return CommandHandler(client, kv, m.Nick, user, lastfmNewestScrobble)
 	}
 
-	return "one of [s]et or [l]astscrobble must be passed as a command", nil
+	commands := []string{
+		"set (s)",
+		"scrobbles (l)",
+	}
+
+	cl := colourList(commands)
+
+	return fmt.Sprintf("Available commands: %s", strings.Join(cl, ", ")), nil
 }
 
 func main() {

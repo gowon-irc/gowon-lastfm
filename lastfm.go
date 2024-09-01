@@ -10,6 +10,25 @@ const (
 	lastfmAPIURL = "https://ws.audioscrobbler.com/2.0"
 )
 
+func colourString(in, colour string) string {
+	return fmt.Sprintf("{%s}%s{clear}", colour, in)
+}
+
+func colourList(in []string) (out []string) {
+	out = []string{}
+
+	colours := []string{"green", "red", "blue", "orange", "magenta", "cyan", "yellow"}
+	cl := len(colours)
+
+	for n, i := range in {
+		c := colours[n%cl]
+		o := colourString(i, c)
+		out = append(out, o)
+	}
+
+	return out
+}
+
 type lastfmJSON struct {
 	Recenttracks Recenttracks `json:"recenttracks"`
 }
